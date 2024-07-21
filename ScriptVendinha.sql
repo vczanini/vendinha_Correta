@@ -327,21 +327,18 @@ DECLARE
     total_valor DECIMAL;
     ids INT[];
 BEGIN
-    -- Convert the comma-separated text of IDs into an integer array
     ids := string_to_array(divida_ids, ',')::INT[];
 
-    -- Iterate over the list of divida_ids
     FOR rec IN
         SELECT d.divida_id, d.valor, d.client_id
         FROM maximus.dividas d
         WHERE d.divida_id = ANY(ids) AND pago = 'N'
     LOOP
-        -- Update the divida to mark it as paid
         UPDATE maximus.dividas
-        SET pago = 'S'
+        SET pago = 'S',
+        data_pagamento = timezone('America/Sao_Paulo', now())
         WHERE divida_id = rec.divida_id;
 
-        -- Subtract the valor from total_dividas for the client
         UPDATE maximus.clientes
         SET total_dividas = total_dividas - rec.valor
         WHERE client_id = rec.client_id;
