@@ -347,5 +347,3 @@ BEGIN
     RETURN jsonb_build_object('erro', 0);
 END;
 $$;
- 
-
